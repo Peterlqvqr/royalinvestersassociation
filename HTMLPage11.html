@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Election Bars</title>
+    <style>
+        body {
+            background-color: pink;
+        }
+
+        .bar {
+            width: 100px;
+            height: 30px;
+            background-color: blue;
+            margin-bottom: 10px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            line-height: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>ROYAL INVESTORS ASSOCIATION VOTING SYSTEM</h1>
+
+    <div id="bars-container">
+        <!-- JavaScript will generate and populate the bars here -->
+    </div>
+
+    <script>
+        // Create an array with numbers from 1 to 12
+        var numbers = Array.from({ length: 12 }, (_, i) => i + 1);
+
+        // Shuffle the numbers array using the Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (var i = array.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+            return array;
+        }
+
+        // Distribute the numbers evenly into the bars
+        function distributeNumbers() {
+            var container = document.getElementById("bars-container");
+            var shuffledNumbers = shuffleArray(numbers);
+
+            for (var i = 0; i < shuffledNumbers.length; i++) {
+                var bar = document.createElement("div");
+                bar.className = "bar";
+                bar.textContent = "vote";
+                bar.setAttribute("data-number", shuffledNumbers[i]);
+                container.appendChild(bar);
+            }
+        }
+
+        // Handle bar click event
+        function handleBarClick(event) {
+            var bar = event.target;
+
+            // Check if a selection has already been made
+            if (bar.classList.contains("selected")) {
+                return; // Do nothing if already selected
+            }
+
+            // Select the clicked bar
+            bar.classList.add("selected");
+            var number = bar.getAttribute("data-number");
+            bar.textContent = number;
+            bar.style.backgroundColor = "green";
+            bar.style.cursor = "default";
+
+            // Disable other bars with the same number
+            var bars = document.getElementsByClassName("bar");
+            for (var i = 0; i < bars.length; i++) {
+                if (bars[i].getAttribute("data-number") === number && !bars[i].classList.contains("selected")) {
+                    bars[i].style.cursor = "not-allowed";
+                } else {
+                    bars[i].removeEventListener("click", handleBarClick);
+                    bars[i].style.cursor = "default";
+                }
+            }
+        }
+
+        // Call the function to distribute the numbers
+        distributeNumbers();
+
+        // Add click event listeners to bars
+        var bars = document.getElementsByClassName("bar");
+        for (var i = 0; i < bars.length; i++) {
+            bars[i].addEventListener("click", handleBarClick);
+        }
+    </script>
+</body>
+</html>
